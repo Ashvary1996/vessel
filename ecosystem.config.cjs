@@ -1,9 +1,9 @@
 module.exports = {
   apps: [
     {
-      name: "vessel-backend",
+      name: "vessel-server",
       script: "index.js",
-      cwd: "./server",   //   important when ypu config file in fiffenr place 
+      cwd: "./server", // location of file
       instances: 1,
       autorestart: true,
       watch: false,
