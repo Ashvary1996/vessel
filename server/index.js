@@ -1,8 +1,7 @@
-import express from "express";
-import path from "path";
-
+import express from "express"; 
 const app = express();
 const port = 8000;
+ 
 
 app.use(
   "/images",
@@ -11,8 +10,9 @@ app.use(
     next();
   },
   express.static("/home/ashvary/public", {
-    index: true // make it false for production 
-  }),
+    index: false,
+    extensions: ["jpg", "png"]  // remove this later 
+  })
 );
 
 app.get("/", (req, res) => {
