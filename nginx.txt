@@ -1,0 +1,85 @@
+sudo nano /etc/nginx/sites-available/default
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+
+------------
+#upstream my_app {
+#    server 127.0.0.1:3000;  # PM2 instance 1
+#    server 127.0.0.1:3001;  # PM2 instance 2
+#    server 127.0.0.1:3002;  # PM2 instance 3
+#}
+
+server {
+    listen 8080;
+    server_name localhost;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+-------------------------------------------------
+
+----
+for http to https : SSL 
+----
+
+upstream my_app {
+    server 127.0.0.1:3000;
+    server 127.0.0.1:3001;
+    server 127.0.0.1:3002;
+}
+
+# Redirect HTTP → HTTPS
+server {
+    listen 8080;
+    server_name localhost;
+
+    return 301 https://$host:8443$request_uri;
+}
+
+# HTTPS server
+server {
+    listen 8443 ssl;
+    server_name localhost;
+
+    ssl_certificate /path/to/ssl/localhost.crt;
+    ssl_certificate_key /path/to/ssl/localhost.key;
+
+    location / {
+        proxy_pass http://my_app;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+}
+
+----------------------------------------------
+Cache
+1. Add Cache Engine (GLOBAL)
+
+----
+sudo nano /etc/nginx/nginx.conf
+
+Inside http {} block add:
+
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_cache:10m max_size=500m inactive=30m use_temp_path=off;
+
+        my_cache → cache name
+        10m → memory for keys
+        500m → max cache size
+        30m → auto delete unused cache
+
+-- 
+2. Use Cache in Your API
+Now edit your site config:
+
+sudo nano /etc/nginx/sites-available/default

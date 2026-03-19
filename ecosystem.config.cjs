@@ -6,7 +6,8 @@ module.exports = {
       cwd: "./server", // location of file
       instances: 1,
       autorestart: true,
-      watch: false,
+      watch: false,  // true for development 
+      // ignore_watch: ["node_modules", "logs"], // don’t watch these folders
       env: {
         PORT: 8000,
       },
