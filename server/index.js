@@ -1,7 +1,7 @@
-import express from "express"; 
+import express from "express";
 const app = express();
 const port = 8000;
- 
+
 
 app.use(
   "/images",
@@ -19,6 +19,7 @@ app.get("/", (req, res) => {
   console.log("Hello, World !.......", process.pid);
   res.send(`Hello, World !.......${process.pid}`);
 });
+ 
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

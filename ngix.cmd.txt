@@ -1,0 +1,41 @@
+sudo systemctl start nginx
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+sudo systemctl reload nginx
+sudo systemctl status nginx
+sudo pkill nginx
+
+---------------
+sudo tail -f /var/log/nginx/access.log
+---------------
+sudo nano /etc/nginx/nginx.conf
+sudo nano /etc/nginx/sites-available/default
+
+sudo nginx -t    // test file 
+sudo systemctl reload nginx
+ 
+-------------------------
+Always edit in sites-available.
+Don’t edit files directly in sites-enabled because enabled is just a link
+-------------------------
+
+Step 1 → Create config
+sudo nano /etc/nginx/sites-available/vessel
+
+Step 2 → Enable it
+sudo ln -s /etc/nginx/sites-available/vessel /etc/nginx/sites-enabled/
+
+Step 3 → Restart nginx
+sudo nginx -t   # check config
+sudo systemctl reload nginx
+
+-------
+to view:
+ls /etc/nginx/sites-enabled/
+--
+Disable a particular name site or all site :
+sudo rm /etc/nginx/sites-enabled/vessel
+or
+sudo rm /etc/nginx/sites-enabled/*
+
+sudo systemctl reload nginx

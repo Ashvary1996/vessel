@@ -1,0 +1,81 @@
+# Rate limit zone (per IP)
+limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
+
+# Connection limit (per IP)
+limit_conn_zone $binary_remote_addr zone=conn_limit:10m;
+
+#upstream my_app {
+#    server 127.0.0.1:3000 max_fails=3 fail_timeout=10s;  # PM2 instance 1
+#    server 127.0.0.1:3001 max_fails=3 fail_timeout=10s;  # PM2 instance 2
+#    server 127.0.0.1:3002 max_fails=3 fail_timeout=10s;  # PM2 instance 3
+
+#    server 127.0.0.1:8000;  # backup server if all above fail
+#}
+
+# Redirect http -> https
+server {
+    listen 8080;
+    server_name localhost;
+
+    return 301 https://$host:8888$request_uri;
+
+    # if not using redirect use below things
+    # location / {
+    #     proxy_pass http://127.0.0.1:8000;
+    #     proxy_http_version 1.1;
+    #     proxy_set_header Upgrade $http_upgrade;
+    #     proxy_set_header Connection 'upgrade';
+    #     proxy_set_header Host $host;
+    #     proxy_cache_bypass $http_upgrade;
+    # }
+}
+
+# HTTPS server
+server {
+    listen 8888 ssl;
+    server_name localhost;
+
+    ssl_certificate /home/ashvary/ssl/localhost.crt;
+    ssl_certificate_key /home/ashvary/ssl/localhost.key;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+
+    # Testing cache of images server from server
+    location /images/ {
+        proxy_pass http://127.0.0.1:8000;
+
+        # Nginx cache
+        proxy_cache my_cache;
+        proxy_cache_key "$scheme$request_method$host$request_uri";
+        proxy_cache_valid 200 30s;
+        proxy_cache_valid 404 10s;
+        proxy_cache_methods GET HEAD;
+
+        # Ignore backend cache headers
+        proxy_ignore_headers Cache-Control Expires Set-Cookie;
+
+        # Hide things
+        proxy_hide_header Cache-Control;
+        proxy_hide_header Set-Cookie;
+        proxy_hide_header ETag;
+        proxy_hide_header Last-Modified;
+
+        etag off;
+
+        # For Browser Cache
+        expires 30s;
+        add_header Cache-Control "public, max-age=30" always;
+
+        # Debug
+        add_header X-Cache-Status $upstream_cache_status always;
+    }
+
+
+}
