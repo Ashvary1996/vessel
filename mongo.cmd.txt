@@ -1,0 +1,80 @@
+MongoDB Install & Setup
+------
+sudo apt update
+sudo apt install -y mongodb-org 
+
+sudo systemctl start mongod
+sudo systemctl enable mongod
+sudo systemctl status mongod
+
+mongosh
+
+exit
+--------
+MongoDB Users & Auth
+
+use admin
+
+db.createUser({ user: "admin", pwd: "StrongPassword123", roles: [{ role: "root", db: "admin" }] })
+
+use vesselDb
+
+db.createUser({ user: "appUser", pwd: "AppPass123", roles: [{ role: "readWrite", db: "vesselDb" }] })
+
+show users
+db.getUsers()
+db.getUser("appUser")
+db.updateUser("appUser", { roles: [{ role: "read", db: "vesselDb" }] })
+db.dropUser("appUser")
+
+🔑 Login with Auth
+
+mongosh -u admin -p --authenticationDatabase admin
+
+⚙️ Config & Restart
+
+sudo nano /etc/mongod.conf
+sudo systemctl restart mongod
+sudo systemctl stop mongod
+sudo systemctl start mongod
+
+📊 Logs & Debug
+
+sudo systemctl status mongod
+sudo tail -f /var/log/mongodb/mongod.log
+sudo lsof -i :27017
+
+🌐 Firewall (UFW)
+
+sudo apt install ufw
+sudo ufw enable
+sudo ufw allow 27017
+sudo ufw allow from YOUR_IP to any port 27017
+sudo ufw status
+
+🔌 MongoDB URI
+
+mongodb://127.0.0.1:27017/vesselDb
+mongodb://appUser:AppPass123@127.0.0.1:27017/vesselDb
+mongodb://admin:password@127.0.0.1:27017/dbname?authSource=admin
+
+🧪 Backup & Restore
+
+mongodump --db vesselDb --out /backup
+mongorestore /backup
+
+📈 Monitoring
+
+mongostat
+mongotop
+
+
+💡 Most Important Reminder
+
+create admin first → then enable auth
+never use admin in app
+always use appUser
+check mongod status if error
+yaml spacing must be correct
+
+ 
