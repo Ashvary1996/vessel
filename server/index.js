@@ -36,7 +36,7 @@ app.get("/db", async (req, res) => {
     res.status(500).json({ status: "error", message: error.message });
   }
 });
-
+ 
 
 app.listen(port, async () => {
   await connectToDb();
