@@ -1,2 +1,4 @@
 server/node_modules
 text.txt
+node_modules*
+.env*

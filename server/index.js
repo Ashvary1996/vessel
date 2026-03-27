@@ -1,44 +1,45 @@
-import express from "express";
-import mongoose from "mongoose";
-import connectToDb from "./dbConfig.js";
+const { default: axios } = require("axios");
+const express = require("express");
+require("dotenv").config({
+    path: ".././.env",
+});
 const app = express();
-const port = 8000;
-//-- 
-
-const Users = mongoose.models.user || mongoose.model("user", new mongoose.Schema({}), "user");
-//--
-app.use(
-  "/images",
-  (req, res, next) => {
-    console.log("🔥 Backend HIT for images:", req.url);
-    next();
-  },
-  express.static("/home/ashvary/public", {
-    index: false,
-    extensions: ["jpg", "png"]  // remove this later 
-  })
-);
+const port = process.env.PORT || 8000;
+const cors = require("cors");
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+ 
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  console.log("Hello, World !.......", process.pid);
-  res.send(`Hello, World !.......${process.pid}`);
+     console.log("/ route hit");
+    res.send("Hello World!")
 });
-app.get("/db", async (req, res) => {
-  try {
-    console.log("db route hit.."); 
-    const users = await Users.find({});
+app.get("/data", async (req, res) => {
+    try {
+        const response = await axios.get("https://jsonplaceholder.typicode.com/users");
+        console.log("/data hit");
+        
+        res.json({
+            msg: "success",
+            data: response.data
+        })
+    } catch (error) {
+        console.log("err", error);
+        res.json({
+            msg: "error",
+            error: error
+        })
 
-    res.json({
-      status: "success",
-      users,
-    });
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
-  }
-});
- 
+    }
 
-app.listen(port, async () => {
-  await connectToDb();
-  console.log(`Server is running at http://localhost:${port}`);
 });
+
+app.listen(port, () => {
+    console.log(process.env.NAME, `Example app listening on port ${port}`);
+});
+
+module.exports = app;
