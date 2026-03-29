@@ -22,6 +22,7 @@ app.get("/health", (req, res) => {
     res.status(200).json({
         status: "OK",
         pid: process.pid,
+        PORT: PORT ,
         hostname: os.hostname(),
         uptime: process.uptime()
     });
@@ -29,25 +30,24 @@ app.get("/health", (req, res) => {
 
  
 app.get("/", (req, res) => {
-    console.log(`Hello World : Request served by PID: ${process.pid}`);
+    console.log(`Hello World : Request served by PID: ${process.pid},PORT: ${PORT}`);
     res.send(`Hello from PID ${process.pid}`);
 });
 
  
 app.get("/data", async (req, res) => {
     try {
-        const response = await axios.get("https://jsonplaceholder.typicode.com/users");
-
+        const response = await axios.get("https://jsonplaceholder.typicode.com/users"); 
         res.json({
             success: true,
             pid: process.pid,
+            PORT: PORT,
             hostname: os.hostname(),
             data: response.data
         });
 
     } catch (error) {
-        console.error("Error fetching data:", error.message);
-
+        console.error("Error fetching data:", error.message); 
         res.status(500).json({
             success: false,
             message: "Internal Server Error"
