@@ -33,7 +33,7 @@ module.exports = {
       // watch: false,  // true for development 
       // ignore_watch: ["node_modules", "logs"], // don’t watch these folders
       env: {
-        PORT: 8003,
+        PORT: 8002,
       },
     },
 
