@@ -1,45 +1,60 @@
-const { default: axios } = require("axios");
 const express = require("express");
-require("dotenv").config({
-    path: ".././.env",
-});
-const app = express();
-const port = process.env.PORT || 8000;
+const axios = require("axios");
 const cors = require("cors");
+const os = require("os");
+
+const app = express();
+const PORT = process.env.PORT || 8000;
+
+
 app.use(cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
- 
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-     console.log("/ route hit");
-    res.send("Hello World!")
+ 
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "OK",
+        pid: process.pid,
+        hostname: os.hostname(),
+        uptime: process.uptime()
+    });
 });
+
+ 
+app.get("/", (req, res) => {
+    console.log(`Hello World : Request served by PID: ${process.pid}`);
+    res.send(`Hello from PID ${process.pid}`);
+});
+
+ 
 app.get("/data", async (req, res) => {
     try {
         const response = await axios.get("https://jsonplaceholder.typicode.com/users");
-        console.log("/data hit");
-        
+
         res.json({
-            msg: "success",
+            success: true,
+            pid: process.pid,
+            hostname: os.hostname(),
             data: response.data
-        })
+        });
+
     } catch (error) {
-        console.log("err", error);
-        res.json({
-            msg: "error",
-            error: error
-        })
+        console.error("Error fetching data:", error.message);
 
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
     }
-
 });
 
-app.listen(port, () => {
-    console.log(process.env.NAME, `Example app listening on port ${port}`);
+// start server
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} | PID: ${process.pid}`);
 });
 
 module.exports = app;
