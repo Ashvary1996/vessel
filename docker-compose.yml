@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  backend1:
+    build: ./server
+    image: backend-app
+    container_name: server1
+    ports:
+      - "8000:8000"
+    environment:
+      - SERVER_NAME=server1
+
+  backend2:
+    build: ./server
+    image: backend-app
+    container_name: server2
+    ports:
+      - "8001:8000"
+    environment:
+      - SERVER_NAME=server2
+
+  backend3:
+    build: ./server
+    image: backend-app
+    container_name: server3
+    ports:
+      - "8002:8000"
+    environment:
+      - SERVER_NAME=server3
+
+  frontend:
+    build: ./client
+    container_name: frontendOne
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000   # temp
+    depends_on:
+      - backend1
+      - backend2
+      - backend3

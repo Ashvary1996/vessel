@@ -34,3 +34,12 @@ docker exec -it container-id sh    #Enter container in bash
 docker exec -it container-id bash  #Enter in ubuntu
 
 docker stats
+
+
+docker compose up --build
+docker compose up -d --build
+docker compose up -d --scale backend=3
+
+docker compose ps
+docker compose logs -f
+docker compose down
