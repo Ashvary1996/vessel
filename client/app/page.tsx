@@ -13,7 +13,9 @@ export default function Home() {
 
   const getData = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/data");
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/data`,
+      );
       console.log("res", response.data);
 
       setData(response.data.data);
@@ -25,7 +27,7 @@ export default function Home() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <h1>Docker Learning</h1>
-      <div>hello world</div>
+      <div>Hello world</div>
 
       <div>
         {data?.map((item, index) => {

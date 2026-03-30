@@ -1,0 +1,36 @@
+DOCKER
+ 
+docker build -t app-name .
+docker build -t app-name:v1 .
+docker build -t app-name -f path/Dockerfile . 
+docker build -t vessel-backend -f server/Dockerfile .
+
+docker images
+docker rmi vessel-backend
+
+docker ps        # running container only
+docker ps -a     # all containers
+ 
+docker run --name my-container app-name 
+docker run -p 8000:8000 vessel-backend
+docker run -d -p 8000:8000 app-name #Run in background:
+docker run -d -p 8001:8000 --name backend-app app1
+docker run -d -p 8002:8000 --name s1 -e SERVER_NAME=server1 backend-app
+
+
+docker stop container-id
+docker start container-id
+docker restart container-id
+
+docker rm container-id
+docker rm -f container-id  #Force remove:
+
+
+docker logs container-id
+docker logs -f container-id  #Live logs
+
+
+docker exec -it container-id sh    #Enter container in bash
+docker exec -it container-id bash  #Enter in ubuntu
+
+docker stats
